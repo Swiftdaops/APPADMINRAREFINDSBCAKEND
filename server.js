@@ -34,6 +34,17 @@ const allowedOrigins = rawFrontend.split(',').map((s) => s.trim()).filter(Boolea
 // Log allowed origins for debugging CORS issues in production
 console.log('Allowed frontend origins:', allowedOrigins);
 
+// Print effective startup config useful for diagnosing cookie/CORS problems
+const cookieSecure = process.env.NODE_ENV === 'production' || process.env.FORCE_SECURE_COOKIES === 'true';
+console.log('[startup] NODE_ENV=%s FRONTEND_ORIGIN=%s FORCE_SECURE_COOKIES=%s DEBUG_COOKIE=%s cookieSecure=%s CORS_credentials=%s',
+  process.env.NODE_ENV,
+  process.env.FRONTEND_ORIGIN,
+  process.env.FORCE_SECURE_COOKIES,
+  process.env.DEBUG_COOKIE,
+  cookieSecure,
+  true
+);
+
 // Helper: allow explicit configured origins OR any localhost origin (any port)
 function isAllowedOrigin(origin) {
   // allow non-browser requests (no origin)
