@@ -18,21 +18,27 @@ const generateToken = (res, userId) => {
 // @desc    Auth admin & get token
 // @route   POST /api/admin/login
 const loginAdmin = async (req, res) => {
-  const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
 
-  const admin = await Admin.findOne({ username });
+    const admin = await Admin.findOne({ username });
 
-  if (admin && (await admin.matchPassword(password))) {
-    generateToken(res, admin._id);
-    res.status(200).json({
-      _id: admin._id,
-      username: admin.username,
-      role: admin.role,
-      message: 'Login successful'
-    });
-  } else {
-    res.status(401);
-    throw new Error('Invalid username or password');
+    if (admin && (await admin.matchPassword(password))) {
+      generateToken(res, admin._id);
+      return res.status(200).json({
+        _id: admin._id,
+        username: admin.username,
+        role: admin.role,
+        message: 'Login successful'
+      });
+    }
+
+    res.status(401).json({ message: 'Invalid username or password' });
+  } catch (err) {
+    // Log the full error server-side to help diagnose 502s/500s
+    // eslint-disable-next-line no-console
+    console.error('[loginAdmin] error:', err && err.stack ? err.stack : err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
