@@ -16,7 +16,7 @@ const generateToken = (res, userId) => {
   const cookieOptions = {
     httpOnly: true,
     secure: secureFlag,
-    sameSite: 'none', // allow cross-site cookie for admin frontend
+    sameSite: 'true', // allow cross-site cookie for admin frontend
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   };
 
