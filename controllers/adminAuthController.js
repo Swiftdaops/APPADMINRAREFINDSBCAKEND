@@ -35,10 +35,13 @@ const generateToken = (res, userId) => {
 const loginAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log('[loginAdmin] Attempting login for username:', username);
 
     const admin = await Admin.findOne({ username });
+    console.log('[loginAdmin] Admin found:', !!admin);
 
     if (admin && (await admin.matchPassword(password))) {
+      console.log('[loginAdmin] Password match, generating token');
       generateToken(res, admin._id);
       return res.status(200).json({
         _id: admin._id,
@@ -48,6 +51,7 @@ const loginAdmin = async (req, res) => {
       });
     }
 
+    console.log('[loginAdmin] Invalid credentials');
     res.status(401).json({ message: 'Invalid username or password' });
   } catch (err) {
     // Log the full error server-side to help diagnose 502s/500s
