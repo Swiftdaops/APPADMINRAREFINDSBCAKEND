@@ -66,7 +66,7 @@ const logoutAdmin = (req, res) => {
   res.cookie('admin_jwt', '', {
     httpOnly: true,
     expires: new Date(0),
-    sameSite: 'none',
+    sameSite: 'None', // CORRECTED for consistency
     secure: secureFlag,
   });
   res.status(200).json({ message: 'Logged out successfully' });

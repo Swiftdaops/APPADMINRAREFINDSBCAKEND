@@ -20,6 +20,7 @@ connectDB();
 
 const app = express();
 // Trust first proxy (required when running behind a proxy like Render or similar)
+// This is essential for req.secure to be true and for the 'secure' cookie flag to work.
 app.set('trust proxy', 1);
 const server = http.createServer(app);
 
