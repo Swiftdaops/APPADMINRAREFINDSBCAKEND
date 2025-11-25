@@ -6,13 +6,28 @@ const generateToken = (res, userId) => {
     expiresIn: '30d',
   });
 
-  // Set HTTP-Only Cookie
-  res.cookie('admin_jwt', token, {
+  // Decide secure flag: in production we must send secure cookies when using SameSite=None.
+  // Also allow an explicit override via FORCE_SECURE_COOKIES=true (useful if your platform
+  // sets NODE_ENV differently or you need to force secure cookies).
+  const isProduction = process.env.NODE_ENV === 'production';
+  const forceSecure = process.env.FORCE_SECURE_COOKIES === 'true';
+  const secureFlag = isProduction || forceSecure;
+
+  const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development', // Use secure in production
+    secure: secureFlag,
     sameSite: 'none', // allow cross-site cookie for admin frontend
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-  });
+  };
+
+  // Helpful debug log when troubleshooting cookie/CORS behavior in production
+  if (process.env.DEBUG_COOKIE === 'true') {
+    // eslint-disable-next-line no-console
+    console.log('[auth] set admin_jwt cookie options:', cookieOptions);
+  }
+
+  // Set HTTP-Only Cookie
+  res.cookie('admin_jwt', token, cookieOptions);
 };
 
 // @desc    Auth admin & get token
@@ -45,11 +60,14 @@ const loginAdmin = async (req, res) => {
 // @desc    Logout admin
 // @route   POST /api/admin/logout
 const logoutAdmin = (req, res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const secureFlag = isProduction || process.env.FORCE_SECURE_COOKIES === 'true';
+
   res.cookie('admin_jwt', '', {
     httpOnly: true,
     expires: new Date(0),
     sameSite: 'none',
-    secure: process.env.NODE_ENV !== 'development',
+    secure: secureFlag,
   });
   res.status(200).json({ message: 'Logged out successfully' });
 };
