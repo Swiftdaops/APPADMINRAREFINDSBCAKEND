@@ -15,8 +15,10 @@ const generateToken = (res, userId) => {
 
   const cookieOptions = {
     httpOnly: true,
+    // When SameSite is 'none', Secure MUST be true. Since we are on Render (proxy)
+    // and NODE_ENV=production, secureFlag is true.
     secure: secureFlag,
-    sameSite: 'true', // allow cross-site cookie for admin frontend
+    sameSite: secureFlag ? 'none' : 'lax', // Use 'none' for cross-site when secure, 'lax' otherwise
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   };
 
@@ -70,7 +72,7 @@ const logoutAdmin = (req, res) => {
   res.cookie('admin_jwt', '', {
     httpOnly: true,
     expires: new Date(0),
-    sameSite: 'None', // CORRECTED for consistency
+    sameSite: secureFlag ? 'none' : 'lax',
     secure: secureFlag,
   });
   res.status(200).json({ message: 'Logged out successfully' });
