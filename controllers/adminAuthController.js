@@ -10,7 +10,7 @@ const generateToken = (res, userId) => {
   res.cookie('admin_jwt', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV !== 'development', // Use secure in production
-    sameSite: 'strict',
+    sameSite: 'none', // allow cross-site cookie for admin frontend
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   });
 };
@@ -48,6 +48,8 @@ const logoutAdmin = (req, res) => {
   res.cookie('admin_jwt', '', {
     httpOnly: true,
     expires: new Date(0),
+    sameSite: 'none',
+    secure: process.env.NODE_ENV !== 'development',
   });
   res.status(200).json({ message: 'Logged out successfully' });
 };

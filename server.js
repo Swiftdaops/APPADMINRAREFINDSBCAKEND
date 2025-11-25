@@ -19,6 +19,8 @@ dotenv.config();
 connectDB();
 
 const app = express();
+// Trust first proxy (required when running behind a proxy like Render or similar)
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 
 // Attach Socket.io to the HTTP server and expose on app
@@ -28,6 +30,9 @@ const { Server } = require('socket.io');
 // Include the production admin frontend on Netlify as a safe default fallback
 const rawFrontend = process.env.FRONTEND_ORIGIN || 'https://rarefindsintl.netlify.app';
 const allowedOrigins = rawFrontend.split(',').map((s) => s.trim()).filter(Boolean);
+
+// Log allowed origins for debugging CORS issues in production
+console.log('Allowed frontend origins:', allowedOrigins);
 
 // Helper: allow explicit configured origins OR any localhost origin (any port)
 function isAllowedOrigin(origin) {
