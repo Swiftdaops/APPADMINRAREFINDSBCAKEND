@@ -26,7 +26,7 @@ const { Server } = require('socket.io');
 
 // Accept multiple frontend origins (comma-separated) or default to Vite port 5173
 // Include the production admin frontend on Netlify as a safe default fallback
-const rawFrontend = process.env.FRONTEND_ORIGIN || 'http://localhost:5173,https://rarefindsintl.netlify.app';
+const rawFrontend = process.env.FRONTEND_ORIGIN || 'https://rarefindsintl.netlify.app';
 const allowedOrigins = rawFrontend.split(',').map((s) => s.trim()).filter(Boolean);
 
 // Helper: allow explicit configured origins OR any localhost origin (any port)
