@@ -70,6 +70,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Unconditional request logging to help diagnose routing/CORS in production
+app.use((req, res, next) => {
+  // eslint-disable-next-line no-console
+  console.log('[ROUTE DEBUG]', new Date().toISOString(), 'method=', req.method, 'path=', req.path, 'origin=', req.headers.origin);
+  next();
+});
+
 // CORS configuration for REST endpoints — allow frontend(s) defined in FRONTEND_ORIGIN
 // Use the same dev-friendly behavior for REST endpoints when in development.
 const restCorsOptions = devCors

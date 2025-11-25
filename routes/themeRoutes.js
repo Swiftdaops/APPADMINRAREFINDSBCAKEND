@@ -4,6 +4,7 @@ const { getTheme, updateTheme, testUpdateTheme } = require('../controllers/theme
 const { protect } = require('../middleware/authMiddleware');
 
 // Get current global theme
+router.get('/debug', (req, res) => res.json({ ok: true, now: Date.now() }));
 router.get('/theme', getTheme);
 
 // Update global theme (restricted to authenticated admin)
