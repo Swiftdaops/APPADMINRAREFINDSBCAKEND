@@ -3,6 +3,11 @@ const Admin = require('../models/Admin');
 
 const connectDB = async () => {
   try {
+    if (!process.env.MONGO_URI) {
+      console.error('Missing required environment variable: MONGO_URI.\nPlease create a `.env` file in the backend root (copy `.env.example`) and set MONGO_URI to your MongoDB connection string.');
+      process.exit(1);
+    }
+
     const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
 
